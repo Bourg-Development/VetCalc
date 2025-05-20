@@ -1,0 +1,360 @@
+/* public/css/pages/dashboard.css */
+
+/* Dashboard Specific Styles */
+.dashboard-page {
+    background-color: var(--gray-50);
+}
+
+.dashboard-page .main-content {
+    padding: var(--spacing-6) 0 var(--spacing-12);
+}
+
+/* Dashboard Grid Layout */
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    gap: var(--spacing-6);
+    margin-bottom: var(--spacing-8);
+}
+
+/* Dashboard Welcome Message */
+.dashboard-welcome {
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    color: var(--white);
+    padding: var(--spacing-8);
+    border-radius: var(--border-radius-xl);
+    text-align: center;
+    margin-bottom: var(--spacing-8);
+    box-shadow: var(--shadow-lg);
+}
+
+.dashboard-welcome h1 {
+    font-size: var(--font-size-3xl);
+    font-weight: var(--font-weight-bold);
+    margin-bottom: var(--spacing-4);
+    color: var(--white);
+}
+
+.dashboard-welcome p {
+    font-size: var(--font-size-lg);
+    opacity: 0.9;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+/* Stats Grid Enhancements */
+.stats-grid {
+    margin-bottom: var(--spacing-10);
+}
+
+.stat-card:hover {
+    transform: translateY(-4px) scale(1.02);
+    box-shadow: var(--shadow-xl);
+}
+
+/* Dashboard Card Specific Layouts */
+.dashboard-card {
+    /* Default - 6 columns */
+    grid-column: span 6;
+}
+
+.dashboard-card:nth-child(1) {
+    /* Quick Actions */
+    grid-column: span 6;
+}
+
+.dashboard-card:nth-child(2) {
+    /* Popular Medications - Full width */
+    grid-column: span 12;
+}
+
+.dashboard-card:nth-child(3) {
+    /* Dosage Calculator - Full width */
+    grid-column: span 12;
+}
+
+/* Animation for dashboard cards */
+.dashboard-card {
+    animation: dashboardCardFadeIn 0.6s ease-out forwards;
+    opacity: 0;
+    transform: translateY(20px);
+}
+
+.dashboard-card:nth-child(1) { animation-delay: 0.1s; }
+.dashboard-card:nth-child(2) { animation-delay: 0.2s; }
+.dashboard-card:nth-child(3) { animation-delay: 0.3s; }
+.dashboard-card:nth-child(4) { animation-delay: 0.4s; }
+.dashboard-card:nth-child(5) { animation-delay: 0.5s; }
+
+@keyframes dashboardCardFadeIn {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Enhanced Activity Items */
+.activity-item {
+    border-left: 4px solid transparent;
+    transition: all var(--transition-normal);
+}
+
+.activity-item:hover {
+    border-left-color: var(--primary-color);
+    transform: translateX(4px);
+    box-shadow: var(--shadow-md);
+}
+
+.activity-item[data-activity-type="calculation"] {
+    border-left-color: var(--success-color);
+}
+
+.activity-item[data-activity-type="medication"] {
+    border-left-color: var(--primary-color);
+}
+
+.activity-item[data-activity-type="scan"] {
+    border-left-color: var(--warning-color);
+}
+
+/* Enhanced Medication Items */
+.medication-item {
+    position: relative;
+    overflow: hidden;
+}
+
+.medication-item::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+    transition: left 0.5s ease;
+}
+
+.medication-item:hover::before {
+    left: 100%;
+}
+
+/* Quick Actions Enhanced */
+.quick-action {
+    position: relative;
+    overflow: hidden;
+}
+
+.quick-action::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    background-color: rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    transition: width 0.3s ease, height 0.3s ease;
+}
+
+.quick-action:hover::after {
+    width: 200px;
+    height: 200px;
+}
+
+/* Charts Section Enhancements */
+.charts-section {
+    animation: chartsSlideUp 0.8s ease-out 0.6s forwards;
+    opacity: 0;
+    transform: translateY(40px);
+}
+
+@keyframes chartsSlideUp {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Appointment Item Enhancements */
+.appointment-item {
+    position: relative;
+    padding-left: var(--spacing-6);
+}
+
+.appointment-item::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 3px;
+    height: 60%;
+    background-color: var(--primary-color);
+    border-radius: var(--border-radius-full);
+}
+
+.appointment-item:hover {
+    background-color: rgba(41, 146, 208, 0.05);
+}
+
+/* Dashboard Responsive Design */
+@media (max-width: 1200px) {
+    .dashboard-card:nth-child(1) { grid-column: span 12; }
+    .dashboard-card:nth-child(3) { grid-column: span 12; }
+}
+
+@media (max-width: 768px) {
+    .dashboard-page .main-content {
+        padding: var(--spacing-4) 0 var(--spacing-8);
+    }
+
+    .dashboard-grid {
+        grid-template-columns: 1fr;
+        gap: var(--spacing-4);
+    }
+
+    .dashboard-card {
+        grid-column: span 1;
+    }
+
+    .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: var(--spacing-4);
+    }
+
+    .dashboard-welcome {
+        padding: var(--spacing-6);
+        margin-bottom: var(--spacing-6);
+    }
+
+    .dashboard-welcome h1 {
+        font-size: var(--font-size-2xl);
+    }
+
+    .dashboard-welcome p {
+        font-size: var(--font-size-base);
+    }
+}
+
+@media (max-width: 480px) {
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .dashboard-welcome {
+        padding: var(--spacing-4);
+    }
+
+    .dashboard-welcome h1 {
+        font-size: var(--font-size-xl);
+    }
+
+    .chart-actions {
+        flex-direction: column;
+        gap: var(--spacing-2);
+    }
+
+    .chart-action-btn {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
+/* Dark Theme Support */
+[data-theme="dark"] .dashboard-page {
+    background-color: var(--gray-900);
+}
+
+[data-theme="dark"] .dashboard-card {
+    background-color: var(--gray-800);
+    border-color: var(--gray-700);
+}
+
+[data-theme="dark"] .stat-card:hover,
+[data-theme="dark"] .dashboard-card:hover {
+    border-color: var(--primary-color);
+    box-shadow: 0 8px 32px rgba(41, 146, 208, 0.2);
+}
+
+[data-theme="dark"] .activity-item,
+[data-theme="dark"] .medication-item,
+[data-theme="dark"] .appointment-item {
+    background-color: var(--gray-700);
+}
+
+[data-theme="dark"] .activity-item:hover,
+[data-theme="dark"] .medication-item:hover,
+[data-theme="dark"] .appointment-item:hover {
+    background-color: var(--gray-600);
+}
+
+/* Print Styles */
+@media print {
+    .dashboard-page {
+        background-color: white;
+    }
+
+    .dashboard-card {
+        break-inside: avoid;
+        box-shadow: none;
+        border: 1px solid #ddd;
+        margin-bottom: var(--spacing-4);
+    }
+
+    .chart-actions,
+    .card-link,
+    .quick-actions,
+    .btn {
+        display: none;
+    }
+
+    .charts-section {
+        display: none;
+    }
+}
+
+/* Accessibility Enhancements */
+@media (prefers-reduced-motion: reduce) {
+    .dashboard-card,
+    .stat-card,
+    .activity-item,
+    .medication-item,
+    .quick-action {
+        animation: none;
+        transition: none;
+    }
+
+    .dashboard-card {
+        opacity: 1;
+        transform: none;
+    }
+
+    .charts-section {
+        opacity: 1;
+        transform: none;
+    }
+}
+
+/* Focus indicators for keyboard navigation */
+.activity-item:focus,
+.medication-item:focus,
+.quick-action:focus,
+.appointment-item:focus {
+    outline: 2px solid var(--primary-color);
+    outline-offset: 2px;
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+    .dashboard-card,
+    .stat-card {
+        border-width: 2px;
+    }
+
+    .activity-item,
+    .medication-item,
+    .appointment-item {
+        border: 1px solid;
+    }
+}

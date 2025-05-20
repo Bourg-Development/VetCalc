@@ -1,0 +1,49 @@
+<!-- views/components/quick-actions.ejs -->
+<div class="dashboard-card">
+    <div class="card-header">
+        <h2 class="card-title">
+            <i class="card-icon">
+                <span class="material-symbols-outlined">
+                    bolt
+                </span>
+            </i>
+            Schnellzugriff
+        </h2>
+    </div>
+    <div class="card-content">
+        <div class="quick-actions">
+            <a href="/medications?add=true" class="quick-action">
+                <div class="action-icon">
+                    <span class="material-symbols-outlined">
+                        add
+                    </span>
+                </div>
+                <span class="action-text">Medikament hinzufügen</span>
+            </a>
+            <a href="/dosage/quick" class="quick-action">
+                <div class="action-icon">
+                    <span class="material-symbols-outlined">
+                        calculate
+                    </span>
+                </div>
+                <span class="action-text">Schnelle Dosierung</span>
+            </a>
+            <a href="/barcode/scan" class="quick-action">
+                <div class="action-icon">
+                    <span class="material-symbols-outlined">
+                        barcode
+                    </span>
+                </div>
+                <span class="action-text">Barcode scannen</span>
+            </a>
+            <a href="/medications/search" class="quick-action">
+                <div class="action-icon">
+                    <span class="material-symbols-outlined">
+                        search
+                    </span>
+                </div>
+                <span class="action-text">Medikamente suchen</span>
+            </a>
+        </div>
+    </div>
+</div>

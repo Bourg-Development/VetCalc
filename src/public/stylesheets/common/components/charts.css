@@ -1,0 +1,378 @@
+/* public/css/components/charts.css */
+
+/* Charts Container */
+.charts-section {
+    margin-bottom: var(--spacing-8);
+}
+
+.chart-container {
+    position: relative;
+    width: 100%;
+    height: 300px;
+    background-color: var(--white);
+    border-radius: var(--border-radius-lg);
+    padding: var(--spacing-4);
+    box-shadow: var(--shadow-md);
+    border: 1px solid var(--gray-100);
+}
+
+/* Chart Canvas */
+.chart-container canvas {
+    max-width: 100%;
+    max-height: 100%;
+}
+
+/* Chart Loading State */
+.chart-loading {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-3);
+    color: var(--gray-600);
+}
+
+.chart-loading-spinner {
+    width: 2rem;
+    height: 2rem;
+    border: 3px solid var(--gray-200);
+    border-top: 3px solid var(--primary-color);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+.chart-loading-text {
+    font-size: var(--font-size-sm);
+    color: var(--gray-500);
+}
+
+/* Chart Error State */
+.chart-error {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    color: var(--gray-500);
+    padding: var(--spacing-4);
+}
+
+.chart-error-icon {
+    font-size: var(--font-size-3xl);
+    color: var(--gray-400);
+    margin-bottom: var(--spacing-2);
+}
+
+.chart-error-message {
+    font-size: var(--font-size-sm);
+    margin-bottom: var(--spacing-3);
+}
+
+.chart-retry-btn {
+    padding: var(--spacing-2) var(--spacing-4);
+    font-size: var(--font-size-xs);
+    background-color: var(--primary-color);
+    color: var(--white);
+    border: none;
+    border-radius: var(--border-radius-md);
+    cursor: pointer;
+    transition: background-color var(--transition-fast);
+}
+
+.chart-retry-btn:hover {
+    background-color: var(--secondary-color);
+}
+
+/* Chart Header */
+.chart-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: var(--spacing-4);
+    padding-bottom: var(--spacing-3);
+    border-bottom: 1px solid var(--gray-200);
+}
+
+.chart-title {
+    font-size: var(--font-size-lg);
+    font-weight: var(--font-weight-semibold);
+    color: var(--secondary-color);
+    margin: 0;
+}
+
+.chart-actions {
+    display: flex;
+    gap: var(--spacing-2);
+}
+
+.chart-action-btn {
+    padding: var(--spacing-1) var(--spacing-2);
+    font-size: var(--font-size-xs);
+    background-color: transparent;
+    color: var(--gray-600);
+    border: 1px solid var(--gray-300);
+    border-radius: var(--border-radius-sm);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-1);
+}
+
+.chart-action-btn:hover {
+    background-color: var(--gray-100);
+    color: var(--gray-800);
+}
+
+.chart-action-btn:active {
+    transform: translateY(1px);
+}
+
+/* Chart Legend Customization */
+.chart-legend {
+    margin-top: var(--spacing-4);
+    padding-top: var(--spacing-3);
+    border-top: 1px solid var(--gray-200);
+}
+
+.chart-legend-list {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: var(--spacing-4);
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.chart-legend-item {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-2);
+    font-size: var(--font-size-sm);
+    color: var(--gray-700);
+}
+
+.chart-legend-color {
+    width: 0.75rem;
+    height: 0.75rem;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+/* Chart Tooltip Customization */
+.chartjs-tooltip {
+    background-color: rgba(0, 0, 0, 0.8) !important;
+    color: var(--white) !important;
+    border-radius: var(--border-radius-md) !important;
+    box-shadow: var(--shadow-lg) !important;
+    font-family: var(--font-family) !important;
+    font-size: var(--font-size-sm) !important;
+    padding: var(--spacing-3) !important;
+}
+
+.chartjs-tooltip-title {
+    font-weight: var(--font-weight-semibold) !important;
+    margin-bottom: var(--spacing-1) !important;
+}
+
+.chartjs-tooltip-body {
+    font-weight: var(--font-weight-normal) !important;
+}
+
+/* Responsive Chart Containers */
+@media (max-width: 1024px) {
+    .chart-container {
+        height: 250px;
+    }
+}
+
+@media (max-width: 768px) {
+    .chart-container {
+        height: 200px;
+        padding: var(--spacing-3);
+    }
+
+    .chart-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: var(--spacing-2);
+    }
+
+    .chart-actions {
+        width: 100%;
+        justify-content: flex-end;
+    }
+
+    .chart-legend-list {
+        flex-direction: column;
+        align-items: center;
+        gap: var(--spacing-2);
+    }
+}
+
+@media (max-width: 480px) {
+    .chart-container {
+        height: 180px;
+    }
+
+    .chart-actions {
+        flex-direction: column;
+        width: 100%;
+    }
+
+    .chart-action-btn {
+        justify-content: center;
+        padding: var(--spacing-2) var(--spacing-3);
+    }
+}
+
+/* Chart Data Tables (for accessibility) */
+.chart-data-table {
+    width: 100%;
+    margin-top: var(--spacing-4);
+    border-collapse: collapse;
+    font-size: var(--font-size-sm);
+    display: none; /* Hidden by default, shown when requested */
+}
+
+.chart-data-table th,
+.chart-data-table td {
+    padding: var(--spacing-2) var(--spacing-3);
+    text-align: left;
+    border-bottom: 1px solid var(--gray-200);
+}
+
+.chart-data-table th {
+    background-color: var(--gray-50);
+    font-weight: var(--font-weight-semibold);
+    color: var(--gray-800);
+}
+
+.chart-data-table.visible {
+    display: table;
+}
+
+/* Chart Accessibility */
+.chart-container[role="img"] {
+    outline: none;
+}
+
+.chart-container:focus {
+    outline: 2px solid var(--primary-color);
+    outline-offset: 2px;
+}
+
+.chart-sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+/* Chart Animation States */
+.chart-container.loading {
+    opacity: 0.7;
+    pointer-events: none;
+}
+
+.chart-container.error {
+    border-color: var(--error-color);
+    background-color: rgba(239, 68, 68, 0.05);
+}
+
+.chart-fade-in {
+    animation: chartFadeIn 0.5s ease-out;
+}
+
+@keyframes chartFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Usage Chart Specific Styles */
+#usage-chart-container {
+    /* Specific styles for usage chart if needed */
+}
+
+/* Categories Chart Specific Styles */
+#categories-chart-container {
+    /* Specific styles for categories chart if needed */
+}
+
+/* Chart Export Modal (if implemented) */
+.chart-export-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.chart-export-content {
+    background-color: var(--white);
+    padding: var(--spacing-6);
+    border-radius: var(--border-radius-lg);
+    box-shadow: var(--shadow-xl);
+    max-width: 400px;
+    width: 90%;
+}
+
+.chart-export-title {
+    margin-bottom: var(--spacing-4);
+    color: var(--secondary-color);
+}
+
+.chart-export-options {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-3);
+}
+
+.chart-export-option {
+    padding: var(--spacing-3);
+    border: 1px solid var(--gray-300);
+    border-radius: var(--border-radius-md);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    text-align: center;
+}
+
+.chart-export-option:hover {
+    border-color: var(--primary-color);
+    background-color: rgba(41, 146, 208, 0.05);
+}
+
+.chart-export-close {
+    margin-top: var(--spacing-4);
+    width: 100%;
+    padding: var(--spacing-3);
+    background-color: var(--gray-100);
+    border: none;
+    border-radius: var(--border-radius-md);
+    cursor: pointer;
+    color: var(--gray-700);
+}
+
+.chart-export-close:hover {
+    background-color: var(--gray-200);
+}

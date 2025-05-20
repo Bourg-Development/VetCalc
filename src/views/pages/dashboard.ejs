@@ -1,0 +1,34 @@
+<!-- views/pages/dashboard.ejs -->
+<%
+// Page variables
+title = 'Dashboard';
+description = 'Übersicht über deine VetCalc Aktivitäten';
+currentPage = 'dashboard';
+bodyClass = 'dashboard-page';
+pageHeader = {
+    title: 'Dashboard',
+    subtitle: 'Willkommen zurück, Dr. Bourg',
+    breadcrumbs: [
+        { text: 'Home', url: '/' },
+        { text: 'Dashboard' }
+    ]
+};
+pageCss = '<link rel="styleshe/et" href="/static/stylesheets/pages/dashboard.css">';
+pageJs = '<script src="/static/scripts/pages/dashboard.js"></script>';
+%>
+
+<!-- Quick Stats -->
+<%- include('../components/stats-grid') %>
+
+<!-- Main Dashboard Content -->
+<div class="dashboard-grid">
+    <!-- Quick Actions -->
+    <%- include('../components/quick-actions') %>
+
+    <!-- Popular Medications -->
+    <%- include('../components/popular-medications') %>
+
+    <!-- Dosage Calculator Widget -->
+    <%- include('../components/dosage-calculator') %>
+</div>
+

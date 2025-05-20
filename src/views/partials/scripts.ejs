@@ -1,0 +1,32 @@
+<!-- views/partials/scripts.ejs -->
+<!-- Core Scripts -->
+<script src="/static/scripts/common/utils/api.js"></script>
+<script src="/static/scripts/common/utils/helpers.js"></script>
+<script src="/static/scripts/common/main.js"></script>
+
+<!-- Component Scripts -->
+<% if (currentPage === 'dashboard') { %>
+    <script src="/static/scripts/common/components/dashboard-stats.js"></script>
+    <script src="/static/scripts/common/components/activities.js"></script>
+    <script src="/static/scripts/common/components/medications.js"></script>
+    <script src="/static/scripts/common/components/dosage-calculator.js"></script>
+    <script src="/static/scripts/common/components/charts.js"></script>
+    <script src="/static/scripts/common/components/navbar.js"></script>
+
+<% } %>
+
+<!-- Page-specific Scripts -->
+<% if (typeof pageJs !== 'undefined') { %>
+    <%- pageJs %>
+<% } %>
+
+<!-- Loading Overlay -->
+<div id="loading-overlay" class="loading-overlay">
+    <div class="loading-spinner">
+        <div class="spinner"></div>
+        <p class="loading-text">Wird geladen...</p>
+    </div>
+</div>
+
+<!-- Alert Container -->
+<div id="alert-container" class="alert-container"></div>

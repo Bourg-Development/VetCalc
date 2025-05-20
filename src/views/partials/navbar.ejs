@@ -1,0 +1,107 @@
+<!-- views/partials/navbar.ejs -->
+<nav class="main-navbar">
+    <div class="container">
+        <div class="navbar-content">
+            <!-- Logo Section -->
+            <div class="navbar-brand">
+                <a href="/" class="brand-link">
+                    <svg class="logo" viewBox="0 0 400 100" xmlns="http://www.w3.org/2000/svg">
+                        <!-- Calculator Icon -->
+                        <rect x="15" y="15" width="32" height="40" fill="#2992D0" rx="4"/>
+                        <rect x="19" y="19" width="24" height="8" fill="white" rx="2"/>
+                        <rect x="21" y="21" width="2" height="2" fill="#12283A"/>
+                        <rect x="25" y="21" width="2" height="2" fill="#12283A"/>
+                        <rect x="29" y="21" width="2" height="2" fill="#12283A"/>
+                        <rect x="33" y="21" width="2" height="2" fill="#12283A"/>
+                        <rect x="37" y="21" width="2" height="2" fill="#12283A"/>
+
+                        <rect x="21" y="31" width="4" height="4" fill="white" rx="1"/>
+                        <rect x="27" y="31" width="4" height="4" fill="white" rx="1"/>
+                        <rect x="33" y="31" width="4" height="4" fill="white" rx="1"/>
+                        <rect x="21" y="37" width="4" height="4" fill="white" rx="1"/>
+                        <rect x="27" y="37" width="4" height="4" fill="white" rx="1"/>
+                        <rect x="33" y="37" width="4" height="4" fill="white" rx="1"/>
+                        <rect x="21" y="43" width="10" height="4" fill="#12283A" rx="1"/>
+                        <rect x="33" y="43" width="4" height="4" fill="white" rx="1"/>
+
+                        <!-- Text -->
+                        <text x="65" y="42" fill="white" font-family="Poppins, sans-serif" font-size="32" font-weight="700">VetCalc</text>
+                        <text x="65" y="56" fill="#2992D0" font-family="Poppins, sans-serif" font-size="11" font-weight="400" letter-spacing="1px">POWERED BY BOURG</text>
+                    </svg>
+                </a>
+            </div>
+
+            <!-- Mobile Menu Toggle -->
+            <button class="mobile-menu-toggle" id="mobile-menu-toggle" aria-label="Navigation öffnen">
+                <span class="hamburger-line"></span>
+                <span class="hamburger-line"></span>
+                <span class="hamburger-line"></span>
+            </button>
+
+            <!-- Navigation Links -->
+            <div class="navbar-nav" id="navbar-nav">
+                <ul class="nav-list">
+                    <li class="nav-item">
+                        <a href="/" class="nav-link <%- currentPage === 'dashboard' ? 'active' : '' %>">
+                            <span class="nav-text">Dashboard</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="/medications" class="nav-link <%- currentPage === 'medications' ? 'active' : '' %>">
+                            <span class="nav-text">Medikamente</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="/dosage" class="nav-link <%- currentPage === 'dosage' ? 'active' : '' %>">
+                            <span class="nav-text">Dosierung</span>
+                        </a>
+                    </li>
+                </ul>
+
+                <!-- User Menu in Mobile -->
+                <div class="mobile-user-menu">
+                    <div class="mobile-user-divider"></div>
+                    <a href="/profile" class="mobile-user-item">
+                        <span class="material-symbols-outlined">person</span>
+                        <span>Profil</span>
+                    </a>
+                    <a href="/settings" class="mobile-user-item">
+                        <span class="material-symbols-outlined">settings</span>
+                        <span>Einstellungen</span>
+                    </a>
+                    <a href="/logout" class="mobile-user-item logout">
+                        <span class="material-symbols-outlined">logout</span>
+                        <span>Abmelden</span>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Desktop User Menu -->
+            <div class="navbar-user">
+                <div class="user-menu">
+                    <button class="user-avatar" id="user-menu-toggle" aria-label="Benutzermenü öffnen">
+                        <span class="material-symbols-outlined">person</span>
+                    </button>
+                    <div class="user-dropdown" id="user-dropdown">
+                        <a href="/profile" class="dropdown-item">
+                            <span class="material-symbols-outlined">person</span>
+                            <span>Profil</span>
+                        </a>
+                        <a href="/settings" class="dropdown-item">
+                            <span class="material-symbols-outlined">settings</span>
+                            <span>Einstellungen</span>
+                        </a>
+                        <div class="dropdown-divider"></div>
+                        <a href="/logout" class="dropdown-item logout">
+                            <span class="material-symbols-outlined">logout</span>
+                            <span>Abmelden</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mobile Menu Overlay -->
+    <div class="mobile-menu-overlay" id="mobile-menu-overlay"></div>
+</nav>

@@ -1,0 +1,597 @@
+<!-- views/pages/medications.ejs -->
+<%
+// Page variables
+title = 'Medikamente';
+description = 'Verwalte deine Medikament-Datenbank';
+currentPage = 'medications';
+bodyClass = 'medications-page';
+pageHeader = {
+    title: 'Medikamente',
+    subtitle: 'Medikament-Verwaltung',
+    breadcrumbs: [
+        { text: 'Home', url: '/' },
+        { text: 'Medikamente' }
+    ]
+};
+pageCss = '<link rel="stylesheet" href="/static/stylesheets/pages/medications.css">';
+pageJs = `
+    <script src="/static/scripts/pages/medications.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html5-qrcode/2.3.8/html5-qrcode.min.js"></script>
+`;
+%>
+<!-- Medications Header Actions -->
+<div class="medications-header">
+    <div class="medications-actions">
+        <button class="btn btn-primary" onclick="openAddMedicationModal()">
+            <i class="btn-icon">
+                <span class="material-symbols-outlined">
+                    add
+                </span>
+            </i>
+            Medikament hinzufügen
+        </button>
+        <button class="btn btn-outline" onclick="importMedications()">
+            <i class="btn-icon">
+                <span class="material-symbols-outlined">
+                    input
+                </span>
+            </i>
+            Importieren
+        </button>
+        <button class="btn btn-outline" onclick="exportMedications()">
+            <i class="btn-icon">
+                <span class="material-symbols-outlined">
+                    output
+                </span>
+            </i>
+            Exportieren
+        </button>
+    </div>
+</div>
+
+<!-- Search and Filter Section -->
+<div class="medications-search-section">
+    <div class="search-filters-container">
+        <!-- Search Bar -->
+        <div class="search-bar">
+            <div class="search-input-group">
+                <input type="text"
+                       id="medication-search"
+                       class="form-input search-input"
+                       placeholder="Medikamente durchsuchen..."
+                       autocomplete="off">
+                <button class="search-btn" onclick="searchMedications()">
+                    <i class="search-icon">
+                        <span class="material-symbols-outlined">
+                            search
+                        </span>
+                    </i>
+                </button>
+                <button class="search-clear-btn" onclick="clearSearch()" style="display: none;">
+                    <i class="clear-icon">
+                        <span class="material-symbols-outlined">
+                            close
+                        </span>
+                    </i>
+                </button>
+                <!-- New Barcode Scanner Button -->
+                <button class="barcode-scan-btn" onclick="openBarcodeScanner()" title="Barcode scannen">
+                    <i class="scan-icon">
+                        <span class="material-symbols-outlined">
+                            qr_code_scanner
+                        </span>
+                    </i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Filters -->
+        <div class="filters-container">
+            <div class="filter-group">
+                <label for="category-filter" class="filter-label">Kategorie</label>
+                <select id="category-filter" class="form-select filter-select">
+                    <option value="">Alle Kategorien</option>
+                    <option value="Antibiotika">Antibiotika</option>
+                    <option value="Antiparasitika">Antiparasitika</option>
+                    <option value="Augensalbe">Augensalbe</option>
+                    <option value="Bronchienerweiterer">Bronchienerweiterer</option>
+                    <option value="Ergenzungsfuttermittel">Ergenzungsfuttermittel</option>
+                    <option value="Salbe">Salbe</option>
+                    <option value="Schleimlöser">Schleimlöser</option>
+                    <option value="Schmerzmittel">Schmerzmittel</option>
+                    <option value="Impfstoffe">Impfstoffe</option>
+                    <option value="Hormone">Hormone</option>
+                    <option value="Vitamine">Vitamine</option>
+                    <option value="Sonstige">Sonstige</option>
+                </select>
+            </div>
+
+            <div class="filter-group">
+                <label for="form-filter" class="filter-label">Darreichungsform</label>
+                <select id="form-filter" class="form-select filter-select">
+                    <option value="">Alle Formen</option>
+                    <option value="Tablette">Tabletten</option>
+                    <option value="Kapsel">Kapseln</option>
+                    <option value="Tropfen">Tropfen</option>
+                    <option value="Sirup">Sirup</option>
+                    <option value="Injektion">Injektionen</option>
+                    <option value="Salbe">Salbe</option>
+                    <option value="Spray">Spray</option>
+                </select>
+            </div>
+
+            <div class="filter-group">
+                <label for="sort-filter" class="filter-label">Sortieren nach</label>
+                <select id="sort-filter" class="form-select filter-select">
+                    <option value="name">Name (A-Z)</option>
+                    <option value="name-desc">Name (Z-A)</option>
+                    <option value="category">Kategorie</option>
+                    <option value="created">Zuletzt hinzugefügt</option>
+                    <option value="updated">Zuletzt bearbeitet</option>
+                </select>
+            </div>
+
+            <button class="btn btn-secondary filter-reset-btn" onclick="resetFilters()">
+                <i class="btn-icon">
+                    <span class="material-symbols-outlined">
+                        filter_none
+                    </span>
+                </i>
+                Filter zurücksetzen
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Medications Stats -->
+<div class="medications-stats">
+    <div class="stat-item">
+        <span class="stat-value" id="total-medications-count">-</span>
+        <span class="stat-label">Medikamente gesamt</span>
+    </div>
+    <div class="stat-item">
+        <span class="stat-value" id="filtered-medications-count">-</span>
+        <span class="stat-label">Gefilterte Ergebnisse</span>
+    </div>
+    <div class="stat-item">
+        <span class="stat-value" id="categories-count">-</span>
+        <span class="stat-label">Kategorien</span>
+    </div>
+</div>
+
+<!-- Medications Grid -->
+<div class="medications-container">
+    <div id="medications-grid" class="medications-grid">
+        <!-- Dynamically loaded medication cards -->
+    </div>
+
+    <div id="medications-loading" class="medications-loading" style="display: none;">
+        <div class="medication-loading-spinner"></div>
+        <p class="medication-loading-text">Lade Medikamente...</p>
+    </div>
+
+    <div id="medications-empty" class="medications-empty" style="display: none;">
+        <div class="empty-icon">💊</div>
+        <h3 class="empty-title">Keine Medikamente gefunden</h3>
+        <p class="empty-message">Fügen Sie Ihr erstes Medikament hinzu oder passen Sie Ihre Suchkriterien an.</p>
+        <button class="btn btn-primary" onclick="openAddMedicationModal()">
+            <i class="btn-icon">➕</i>
+            Erstes Medikament hinzufügen
+        </button>
+    </div>
+</div>
+
+<!-- Pagination -->
+<div class="pagination-container">
+    <nav class="pagination" id="medications-pagination">
+        <!-- Dynamically generated pagination -->
+    </nav>
+    <div class="pagination-info">
+        <span id="pagination-info-text">Zeige 1-20 von 100 Medikamenten</span>
+        <select id="items-per-page" class="form-select pagination-select">
+            <option value="20">20 pro Seite</option>
+            <option value="50">50 pro Seite</option>
+            <option value="100">100 pro Seite</option>
+        </select>
+    </div>
+</div>
+
+<!-- Add/Edit Medication Modal -->
+<div id="medication-modal" class="modal" style="display: none;">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3 class="modal-title" id="medication-modal-title">Medikament hinzufügen</h3>
+            <button class="modal-close" onclick="closeMedicationModal()">×</button>
+        </div>
+        <div class="modal-body">
+            <form id="medication-form" class="medication-form">
+                <input type="hidden" id="medication-id" name="id">
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="medication-name" class="form-label required">Name</label>
+                        <input type="text" id="medication-name" name="name" class="form-input" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="medication-strength" class="form-label">Stärke</label>
+                        <input type="text" id="medication-strength" name="strength" class="form-input"
+                               placeholder="z.B. 500mg, 10mg/ml">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="medication-active-ingredient" class="form-label required">Wirkstoff</label>
+                        <input type="text" id="medication-active-ingredient" name="activeIngredient" class="form-input" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="medication-manufacturer" class="form-label">Hersteller</label>
+                        <input type="text" id="medication-manufacturer" name="manufacturer" class="form-input">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="medication-category" class="form-label required">Kategorie</label>
+                        <select id="medication-category" name="category" class="form-select" required>
+                            <option value="">Kategorie wählen</option>
+                            <option value="Antibiotika">Antibiotika</option>
+                            <option value="Antiparasitika">Antiparasitika</option>
+                            <option value="Augensalbe">Augensalbe</option>
+                            <option value="Bronchienerweiterer">Bronchienerweiterer</option>
+                            <option value="Ergenzungsfuttermittel">Ergenzungsfuttermittel</option>
+                            <option value="Salbe">Salbe</option>
+                            <option value="Schleimlöser">Schleimlöser</option>
+                            <option value="Schmerzmittel">Schmerzmittel</option>
+                            <option value="Impfstoffe">Impfstoffe</option>
+                            <option value="Hormone">Hormone</option>
+                            <option value="Vitamine">Vitamine</option>
+                            <option value="Sonstige">Sonstige</option>
+
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="medication-form-select" class="form-label">Darreichungsform</label>
+                        <select id="medication-form-select" name="form" class="form-select">
+                            <option value="">Form wählen</option>
+                            <option value="Tablette">Tablette</option>
+                            <option value="Kapsel">Kapsel</option>
+                            <option value="Tropfen">Tropfen</option>
+                            <option value="Sirup">Sirup</option>
+                            <option value="Injektion">Injektion</option>
+                            <option value="Salbe">Salbe</option>
+                            <option value="Spray">Spray</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="medication-dosage-amount" class="form-label">Dosierung (Menge)</label>
+                        <input type="number" id="medication-dosage-amount" name="dosageAmount"
+                               class="form-input" step="0.001" min="0">
+                    </div>
+                    <div class="form-group">
+                        <label for="medication-dosage-unit" class="form-label">Dosierung (Einheit)</label>
+                        <select id="medication-dosage-unit" name="dosageUnit" class="form-select">
+                            <option value="">Einheit wählen</option>
+                            <option value="mg">mg</option>
+                            <option value="g">g</option>
+                            <option value="mcg">mcg</option>
+                            <option value="pg">pg</option>
+                            <option value="ml">ml</option>
+                            <option value="l">l</option>
+                            <option value="IU">IU</option>
+                            <option value="Stk">Stk</option>
+                            <option value="Tropfen">Tropfen</option>
+                            <option value="Hub">Hub</option>
+                            <option value="Beutel">Beutel</option>
+                            <option value="%">%</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="medication-description" class="form-label">Beschreibung</label>
+                    <textarea id="medication-description" name="description" class="form-textarea"
+                              rows="3" placeholder="Zusätzliche Informationen..."></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Hinweise zur Dosierung</label>
+                    <div id="dosage-instructions-container">
+                        <div class="dosage-instruction-item">
+                            <input type="text" name="dosageInstructions[]" class="form-input"
+                                   placeholder="Hinweis eingeben...">
+                            <button type="button" class="btn btn-sm btn-secondary" onclick="removeDosageInstruction(this)">
+                                <i class="btn-icon">🗑️</i>
+                            </button>
+                        </div>
+                    </div>
+                    <button type="button" class="btn btn-sm btn-outline" onclick="addDosageInstruction()">
+                        <i class="btn-icon">➕</i>
+                        Hinweis hinzufügen
+                    </button>
+                </div>
+
+                <div class="form-group">
+                    <label for="medication-side-effects" class="form-label">Nebenwirkungen</label>
+                    <textarea id="medication-side-effects" name="sideEffects" class="form-textarea"
+                              rows="3" placeholder="Mögliche Nebenwirkungen..."></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="medication-contraindications" class="form-label">Kontraindikation</label>
+                    <textarea id="medication-contraindications" name="contraindications" class="form-textarea"
+                              rows="3" placeholder="Kontraindikationen..."></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="medication-interactions" class="form-label">Wechselwirkungen</label>
+                    <textarea id="medication-interactions" name="interactions" class="form-textarea"
+                              rows="3" placeholder="Bekannte Wechselwirkungen..."></textarea>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="medication-storage" class="form-label">Lagerung</label>
+                        <input type="text" id="medication-storage" name="storage" class="form-input"
+                               placeholder="z.B. Bei Raumtemperatur lagern">
+                    </div>
+                    <div class="form-group">
+                        <label for="medication-prescription-required" class="form-label">Verschreibungspflichtig</label>
+                        <select id="medication-prescription-required" name="prescriptionRequired" class="form-select">
+                            <option value="true">Ja</option>
+                            <option value="false">Nein</option>
+                        </select>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-secondary" onclick="closeMedicationModal()">Abbrechen</button>
+            <button class="btn btn-primary" onclick="saveMedication()">
+                <span id="save-btn-text">Speichern</span>
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Medication Detail Modal -->
+<div id="medication-detail-modal" class="modal" style="display: none;">
+    <div class="modal-content modal-lg">
+        <div class="modal-header">
+            <h3 class="modal-title" id="medication-detail-modal-title">Medikament Details</h3>
+            <button class="modal-close" onclick="closeMedicationDetailModal()">×</button>
+        </div>
+        <div class="modal-body">
+            <div id="medication-detail-content" class="medication-detail-view">
+                <!-- Content will be dynamically populated -->
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-secondary" onclick="closeMedicationDetailModal()">Schließen</button>
+            <button class="btn btn-outline" onclick="editMedicationFromDetail()">
+                <i class="btn-icon">✏️</i>
+                Bearbeiten
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div id="delete-confirmation-modal" class="modal" style="display: none;">
+    <div class="modal-content modal-sm">
+        <div class="modal-header">
+            <h3 class="modal-title">Medikament löschen</h3>
+            <button class="modal-close" onclick="closeDeleteModal()">×</button>
+        </div>
+        <div class="modal-body">
+            <p>Sind Sie sicher, dass Sie das Medikament <strong id="delete-medication-name"></strong> löschen möchten?</p>
+            <p class="text-warning">Diese Aktion kann nicht rückgängig gemacht werden.</p>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-secondary" onclick="closeDeleteModal()">Abbrechen</button>
+            <button class="btn btn-error" onclick="confirmDeleteMedication()">
+                <i class="btn-icon">🗑️</i>
+                Löschen
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Barcode Scanner Modal -->
+<div id="barcode-scanner-modal" class="modal" style="display: none;">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3 class="modal-title">Barcode Scanner</h3>
+            <button class="modal-close" onclick="closeBarcodeScanner()">×</button>
+        </div>
+        <div class="modal-body">
+            <div class="scanner-mode-selector">
+                <button class="mode-btn active" onclick="switchScanMode('camera')" data-mode="camera">
+                    <i class="mode-icon">
+                        <span class="material-symbols-outlined">photo_camera</span>
+                    </i>
+                    Kamera
+                </button>
+                <button class="mode-btn" onclick="switchScanMode('manual')" data-mode="manual">
+                    <i class="mode-icon">
+                        <span class="material-symbols-outlined">keyboard</span>
+                    </i>
+                    Manuell
+                </button>
+                <button class="mode-btn" onclick="switchScanMode('file')" data-mode="file">
+                    <i class="mode-icon">
+                        <span class="material-symbols-outlined">photo</span>
+                    </i>
+                    Aus Bild
+                </button>
+            </div>
+
+            <!-- Camera Scanner -->
+            <div id="camera-scanner" class="scanner-container">
+                <div class="scanner-wrapper">
+                    <div id="reader" class="barcode-reader"></div>
+                    <div class="scanner-overlay">
+                        <div class="scanner-frame"></div>
+                        <p class="scanner-hint">Positionieren Sie den Barcode im Rahmen</p>
+                    </div>
+                </div>
+
+                <div class="camera-controls">
+                    <button id="start-scanner-btn" class="btn btn-primary" onclick="startScanner()">
+                        <i class="btn-icon">
+                            <span class="material-symbols-outlined">play_arrow</span>
+                        </i>
+                        Scanner Starten
+                    </button>
+                    <button id="stop-scanner-btn" class="btn btn-secondary" onclick="stopScanner()" style="display: none;">
+                        <i class="btn-icon">
+                            <span class="material-symbols-outlined">stop</span>
+                        </i>
+                        Scanner Stoppen
+                    </button>
+                    <button class="btn btn-outline" onclick="switchCamera()">
+                        <i class="btn-icon">
+                            <span class="material-symbols-outlined">flip_camera_android</span>
+                        </i>
+                        Kamera Wechseln
+                    </button>
+                </div>
+            </div>
+
+            <!-- Manual Scanner -->
+            <div id="manual-scanner" class="scanner-container" style="display: none;">
+                <div class="manual-input-container">
+                    <div class="input-group">
+                        <input type="text"
+                               id="manual-barcode-input"
+                               class="form-input barcode-input"
+                               placeholder="Barcode eingeben oder scannen..."
+                               onkeypress="handleManualInput(event)">
+                        <button class="btn btn-primary" onclick="processManualBarcode()">
+                            <i class="btn-icon">
+                                <span class="material-symbols-outlined">search</span>
+                            </i>
+                            Suchen
+                        </button>
+                    </div>
+                    <p class="input-hint">Geben Sie den Barcode manuell ein oder verwenden Sie einen Barcode-Scanner</p>
+                </div>
+            </div>
+
+            <!-- File Upload Scanner -->
+            <div id="file-scanner" class="scanner-container" style="display: none;">
+                <div class="file-scanner-section">
+                    <div class="file-input-container">
+                        <label for="barcode-file-input" class="file-input-label">
+                            <i class="btn-icon">
+                                <span class="material-symbols-outlined">photo</span>
+                            </i>
+                            Bild mit Barcode wählen
+                        </label>
+                        <input type="file" id="barcode-file-input" accept="image/*" style="display: none;" onchange="scanBarcodeFromFile(event)">
+                    </div>
+                    <p class="input-hint">Wählen Sie ein Bild mit einem Barcode zum Scannen</p>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-secondary" onclick="closeBarcodeScanner()">Schließen</button>
+        </div>
+    </div>
+</div>
+
+<!-- Add Barcode Modal -->
+<div id="add-barcode-modal" class="modal" style="display: none;">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3 class="modal-title">Barcode Hinzufügen</h3>
+            <button class="modal-close" onclick="closeAddBarcodeModal()">×</button>
+        </div>
+        <div class="modal-body">
+            <form id="add-barcode-form" class="barcode-form">
+                <div class="form-section">
+                    <h4 class="form-section-title">Medikament Auswählen</h4>
+                    <div class="form-group">
+                        <label for="medication-select" class="form-label required">Medikament</label>
+                        <select id="medication-select" name="medicationId" class="form-select" required>
+                            <option value="">Medikament wählen...</option>
+                            <!-- Dynamically populated with medications -->
+                        </select>
+                    </div>
+                    <div id="selected-medication-preview" class="medication-preview" style="display: none;">
+                        <!-- Medication preview will be shown here -->
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h4 class="form-section-title">Barcode Informationen</h4>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="barcode-input" class="form-label required">Barcode</label>
+                            <input type="text"
+                                   id="barcode-input"
+                                   name="barcode"
+                                   class="form-input"
+                                   placeholder="Barcode eingeben..."
+                                   required>
+                        </div>
+                        <div class="form-group">
+                            <label for="barcode-type-select" class="form-label">Barcode Typ</label>
+                            <select id="barcode-type-select" name="barcodeType" class="form-select">
+                                <option value="">Automatisch erkennen</option>
+                                <option value="EAN-13">EAN-13</option>
+                                <option value="EAN8">EAN-8</option>
+                                <option value="Code128">Code 128</option>
+                                <option value="Code39">Code 39</option>
+                                <option value="UPC">UPC</option>
+                                <option value="ITF">ITF</option>
+                                <option value="QR">QR Code</option>
+                                <option value="Other">Sonstige</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="pzn-input" class="form-label">PZN (Pharmazentralnummer)</label>
+                            <input type="text"
+                                   id="pzn-input"
+                                   name="pzn"
+                                   class="form-input"
+                                   placeholder="z.B. 12345678">
+                        </div>
+                        <div class="form-group">
+                            <label for="package-size-input" class="form-label">Packungsgröße</label>
+                            <input type="text"
+                                   id="package-size-input"
+                                   name="packageSize"
+                                   class="form-input"
+                                   placeholder="z.B. 20 Stück, 100ml">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="notes-input" class="form-label">Notizen</label>
+                        <textarea id="notes-input"
+                                  name="notes"
+                                  class="form-textarea"
+                                  rows="3"
+                                  placeholder="Zusätzliche Informationen zum Barcode..."></textarea>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-secondary" onclick="closeAddBarcodeModal()">Abbrechen</button>
+            <button class="btn btn-primary" onclick="saveBarcode()">
+                <i class="btn-icon">
+                    <span class="material-symbols-outlined">save</span>
+                </i>
+                Barcode Speichern
+            </button>
+        </div>
+    </div>
+</div>
