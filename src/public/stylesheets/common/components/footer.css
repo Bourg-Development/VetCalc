@@ -4,7 +4,7 @@
     background-color: var(--secondary-color);
     color: var(--white);
     margin-top: auto;
-    padding: var(--spacing-12) 0 var(--spacing-6);
+    padding: var(--spacing-12) 0 calc(var(--spacing-6) + env(safe-area-inset-bottom));
 }
 
 .footer-content {
@@ -47,6 +47,10 @@
     text-decoration: none;
     font-size: var(--font-size-sm);
     transition: color var(--transition-fast);
+    padding: var(--spacing-1);
+    display: inline-block;
+    min-height: 44px;
+    line-height: 30px; /* For proper vertical centering of text */
 }
 
 .footer-links a:hover {
@@ -85,6 +89,7 @@
 .bourg-logo img {
     height: 5.5rem;
     width: auto;
+    max-width: 100%;
 }
 
 .footer-copyright {
@@ -97,8 +102,23 @@
     font-size: var(--font-size-sm);
 }
 
+/* Orientation handling */
+@media (max-width: 768px) and (orientation: landscape) {
+    .main-footer {
+        padding: var(--spacing-6) 0 calc(var(--spacing-4) + env(safe-area-inset-bottom));
+    }
+
+    .footer-content {
+        gap: var(--spacing-4);
+    }
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
+    .main-footer {
+        padding: var(--spacing-8) 0 calc(var(--spacing-4) + env(safe-area-inset-bottom));
+    }
+
     .footer-content {
         grid-template-columns: repeat(2, 1fr);
         gap: var(--spacing-6);
@@ -107,6 +127,22 @@
     .footer-bottom {
         flex-direction: column;
         text-align: center;
+        padding-top: var(--spacing-4);
+    }
+
+    /* Touch-friendly links */
+    .footer-links li {
+        margin-bottom: var(--spacing-3);
+    }
+
+    .footer-links a {
+        display: inline-block;
+        padding: var(--spacing-1) 0;
+    }
+
+    /* Better spacing for mobile */
+    .footer-powered {
+        margin-bottom: var(--spacing-3);
     }
 }
 
@@ -117,6 +153,39 @@
     }
 
     .main-footer {
-        padding: var(--spacing-8) 0 var(--spacing-4);
+        padding: var(--spacing-6) 0 calc(var(--spacing-4) + env(safe-area-inset-bottom));
+    }
+
+    .bourg-logo img {
+        height: 4rem;
+    }
+
+    .footer-links a {
+        min-height: 44px;
+        line-height: 30px;
+        width: 100%;
+        padding: var(--spacing-1) var(--spacing-2);
+    }
+}
+
+/* Accessibility Improvements */
+@media (prefers-reduced-motion: reduce) {
+    .footer-links a {
+        transition: none;
+    }
+}
+
+/* High contrast mode */
+@media (prefers-contrast: high) {
+    .main-footer {
+        border-top: 2px solid var(--white);
+    }
+
+    .footer-bottom {
+        border-top: 2px solid rgba(255, 255, 255, 0.6);
+    }
+
+    .footer-links a {
+        text-decoration: underline;
     }
 }

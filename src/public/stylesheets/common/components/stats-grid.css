@@ -17,6 +17,7 @@
     gap: var(--spacing-4);
     transition: all var(--transition-normal);
     border: 1px solid var(--gray-100);
+    will-change: transform;
 }
 
 .stat-card:hover {
@@ -104,6 +105,36 @@
     color: var(--white);
 }
 
+/* Orientation handling */
+@media (max-width: 768px) and (orientation: landscape) {
+    .stats-grid {
+        gap: var(--spacing-3);
+    }
+
+    .stat-card {
+        padding: var(--spacing-3);
+        gap: var(--spacing-3);
+    }
+
+    .stat-icon {
+        width: 2.5rem;
+        height: 2.5rem;
+        font-size: var(--font-size-xl);
+    }
+
+    .stat-value {
+        font-size: var(--font-size-2xl);
+    }
+}
+
+/* Touch optimizations */
+@media (pointer: coarse) {
+    .stat-card {
+        min-height: 80px;
+        touch-action: manipulation;
+    }
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
     .stats-grid {
@@ -124,6 +155,11 @@
     .stat-value {
         font-size: var(--font-size-2xl);
     }
+
+    /* Simpler hover animations on mobile */
+    .stat-card:hover {
+        transform: translateY(-1px);
+    }
 }
 
 @media (max-width: 480px) {
@@ -135,11 +171,58 @@
         flex-direction: column;
         text-align: center;
         gap: var(--spacing-3);
+        padding: var(--spacing-5) var(--spacing-4);
     }
 
     .stat-icon {
         width: 4rem;
         height: 4rem;
         font-size: var(--font-size-2xl);
+        margin-bottom: var(--spacing-2);
+    }
+
+    .stat-content {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .stat-value {
+        margin-bottom: var(--spacing-1);
+    }
+
+    /* No transforms on very small screens for better performance */
+    .stat-card:hover {
+        transform: none;
+    }
+}
+
+/* Accessibility Enhancements */
+@media (prefers-reduced-motion: reduce) {
+    .stat-card {
+        transition: none !important;
+    }
+
+    .stat-card:hover {
+        transform: none;
+    }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+    .stat-card {
+        border-width: 2px;
+    }
+
+    .stat-icon {
+        border: 1px solid var(--white);
+    }
+
+    .stat-change {
+        border: 1px solid currentColor;
+    }
+
+    .stat-card.stat-card-primary {
+        border: 2px solid var(--white);
     }
 }

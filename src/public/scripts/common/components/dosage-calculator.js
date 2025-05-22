@@ -1,4 +1,4 @@
-// public/js/components/dosage-calculator.js - Quick dosage calculator
+// public/js/components/dosage-calculator.js - Quick dosage calculator (simplified)
 
 // Initialize Quick Dosage Form
 function initQuickDosageForm() {
@@ -17,121 +17,178 @@ function initQuickDosageForm() {
             if (this.value) {
                 const medication = JSON.parse(this.selectedOptions[0].dataset.medication || '{}');
                 handleMedicationChange(medication);
+            } else {
+                // Clear dosage field when no medication is selected
+                const dosageInput = document.getElementById('quick-dosage');
+                if (dosageInput) {
+                    dosageInput.value = '';
+                }
+
+                // Hide dosage info
+                const infoContainer = document.getElementById('dosage-info');
+                if (infoContainer) {
+                    infoContainer.style.display = 'none';
+                }
             }
         });
     }
 
-    // Form validation
-    setupFormValidation(form);
+    // When weight changes, recalculate if dosage is already filled
+    const weightInput = document.getElementById('quick-weight');
+    if (weightInput) {
+        weightInput.addEventListener('input', function() {
+            const dosageInput = document.getElementById('quick-dosage');
+            if (dosageInput && dosageInput.value) {
+                // Auto-calculate as user types weight if dosage is already set
+                if (this.value && !isNaN(parseFloat(this.value)) && parseFloat(this.value) > 0) {
+                    const calculationPreview = document.getElementById('calculation-preview');
+                    if (calculationPreview) {
+                        const weight = parseFloat(this.value);
+                        const dosage = parseFloat(dosageInput.value);
+                        const result = weight * dosage;
+                        calculationPreview.textContent = `${dosage} × ${weight} = ${result.toFixed(2)}`;
+                        calculationPreview.style.display = 'block';
+                    }
+                }
+            }
+        });
+    }
 
-    // Save form state in localStorage
-    setupFormStatePersistence(form);
+    // Clear the form
+    clearQuickDosage();
 }
 
 function handleMedicationChange(medication) {
     if (!medication) return;
 
-    // Auto-fill default dosage if available
+    // Auto-fill dosage from medication.dosageAmount if available
     const dosageInput = document.getElementById('quick-dosage');
-    if (dosageInput && medication.defaultDosage) {
-        dosageInput.value = medication.defaultDosage;
+    if (dosageInput && medication.dosageAmount) {
+        dosageInput.value = medication.dosageAmount;
 
         // Show dosage info if available
         showDosageInfo(medication);
+
+        // Update calculation preview if weight is already entered
+        const weightInput = document.getElementById('quick-weight');
+        if (weightInput && weightInput.value) {
+            const weight = parseFloat(weightInput.value);
+            if (!isNaN(weight) && weight > 0) {
+                const calculationPreview = document.getElementById('calculation-preview');
+                if (calculationPreview) {
+                    const dosage = parseFloat(medication.dosageAmount);
+                    const result = weight * dosage;
+                    calculationPreview.textContent = `${dosage} × ${weight} = ${result}`;
+                    calculationPreview.style.display = 'block';
+                }
+            }
+        }
     }
 
-    // Update form based on medication type
-    updateFormForMedication(medication);
+    // Update medication unit display
+    updateMedicationUnit(medication);
 }
 
 function showDosageInfo(medication) {
     const infoContainer = document.getElementById('dosage-info');
-    if (!infoContainer || !medication.dosageInfo) return;
+    if (!infoContainer) return;
 
+    // Show standard dosage info
     infoContainer.innerHTML = `
         <div class="dosage-info-panel">
             <h5>Dosierungshinweise für ${medication.name}</h5>
-            <ul>
-                ${medication.dosageInfo.map(info => `<li>${utils.sanitizeHTML(info)}</li>`).join('')}
-            </ul>
+            <p><strong>Standarddosierung:</strong> ${medication.dosageAmount} ${medication.dosageUnit || 'mg/kg'}</p>
+            ${medication.dosageInfo ?
+        `<ul>${medication.dosageInfo.map(info => `<li>${utils.sanitizeHTML(info)}</li>`).join('')}</ul>` : ''}
         </div>
     `;
     infoContainer.style.display = 'block';
 }
 
-function updateFormForMedication(medication) {
-    // Update frequency options based on medication
-    const frequencySelect = document.getElementById('quick-frequency');
-    if (frequencySelect && medication.recommendedFrequencies) {
-        frequencySelect.innerHTML = '';
-        medication.recommendedFrequencies.forEach(freq => {
-            const option = document.createElement('option');
-            option.value = freq.value;
-            option.textContent = freq.label;
-            frequencySelect.appendChild(option);
-        });
-    }
+function updateMedicationUnit(medication) {
+    // Update unit displays throughout the form
+    const unitDisplays = document.querySelectorAll('.medication-unit');
+    const unit = medication.dosageUnit || 'mg/kg';
 
-    // Show/hide additional fields based on medication type
-    toggleAdditionalFields(medication);
-}
+    unitDisplays.forEach(display => {
+        display.textContent = unit;
+    });
 
-function toggleAdditionalFields(medication) {
-    const additionalFields = document.getElementById('additional-dosage-fields');
-    if (!additionalFields) return;
+    // Update result unit display
+    const resultUnitDisplays = document.querySelectorAll('.result-unit');
+    // Determine the result unit (usually same as dosage unit but without the /kg if present)
+    const resultUnit = medication.resultUnit || (unit.endsWith('/kg') ? unit.replace('/kg', '') : unit);
 
-    if (medication.requiresAdditionalInfo) {
-        additionalFields.style.display = 'block';
-
-        // Add specific fields based on medication requirements
-        let fieldsHTML = '';
-
-        if (medication.requiresAge) {
-            fieldsHTML += `
-                <div class="form-group">
-                    <label for="patient-age" class="form-label">Alter des Patienten</label>
-                    <input type="number" id="patient-age" class="form-input" min="0" max="30" step="0.1">
-                </div>
-            `;
-        }
-
-        if (medication.requiresCondition) {
-            fieldsHTML += `
-                <div class="form-group">
-                    <label for="medical-condition" class="form-label">Medizinische Indikation</label>
-                    <select id="medical-condition" class="form-select">
-                        <option value="">Wählen Sie eine Indikation...</option>
-                        ${medication.indications?.map(ind =>
-                `<option value="${ind.value}">${utils.sanitizeHTML(ind.label)}</option>`
-            ).join('') || ''}
-                    </select>
-                </div>
-            `;
-        }
-
-        additionalFields.innerHTML = fieldsHTML;
-    } else {
-        additionalFields.style.display = 'none';
-        additionalFields.innerHTML = '';
-    }
+    resultUnitDisplays.forEach(display => {
+        display.textContent = resultUnit;
+    });
 }
 
 async function calculateQuickDosage() {
     try {
-        const formData = getFormData();
-        const validation = validateDosageForm(formData);
+        const medicationSelect = document.getElementById('quick-medication');
+        const weightInput = document.getElementById('quick-weight');
+        const dosageInput = document.getElementById('quick-dosage');
 
-        if (!validation.isValid) {
-            displayValidationErrors(validation.errors);
+        if (!medicationSelect || !weightInput || !dosageInput) {
+            showAlert('Formularfelder nicht gefunden', 'error');
             return;
         }
 
+        // Validate inputs
+        if (!medicationSelect.value) {
+            showAlert('Bitte wählen Sie ein Medikament aus', 'warning');
+            medicationSelect.focus();
+            return;
+        }
+
+        const weight = parseFloat(weightInput.value);
+        if (isNaN(weight) || weight <= 0) {
+            showAlert('Bitte geben Sie ein gültiges Gewicht ein', 'warning');
+            weightInput.focus();
+            return;
+        }
+
+        const dosage = parseFloat(dosageInput.value);
+        if (isNaN(dosage) || dosage <= 0) {
+            showAlert('Bitte geben Sie eine gültige Dosierung ein', 'warning');
+            dosageInput.focus();
+            return;
+        }
+
+        // Get selected medication
+        const medication = medicationSelect.selectedOptions[0].dataset.medication ?
+            JSON.parse(medicationSelect.selectedOptions[0].dataset.medication) : {};
+
         showLoading();
 
-        const result = await api.post('/dosage/calculate', formData);
-        displayQuickDosageResult(result);
+        // Simple calculation: dosage × weight
+        const calculatedDosage = dosage * weight;
 
+        // Prepare result object based on the API structure
+        const result = {
+            medication: medication,
+            patientWeight: weight,
+            dosagePerKg: dosage,
+            recommendations: {
+                singleDose: calculatedDosage,
+                dailyDose: calculatedDosage * (medication.frequency || 1),
+                frequency: medication.frequency || 1,
+                unit: medication.resultUnit || (medication.dosageUnit ? (medication.dosageUnit.endsWith('/kg') ?
+                    medication.dosageUnit.replace('/kg', '') : medication.dosageUnit) : 'mg'),
+                notes: []
+            }
+        };
+
+        // Add dosage warnings or notes if applicable
+        if (medication.maxDose && calculatedDosage > medication.maxDose) {
+            result.recommendations.warning = `Berechnete Dosis überschreitet die empfohlene Maximaldosis von ${medication.maxDose} ${result.recommendations.unit}!`;
+            result.recommendations.notes.push(`Empfohlene Maximaldosis: ${medication.maxDose} ${result.recommendations.unit}`);
+        }
+
+        displayQuickDosageResult(result);
         showAlert('Dosierung erfolgreich berechnet', 'success');
+
     } catch (error) {
         console.error('Error calculating quick dosage:', error);
         showAlert('Fehler bei der Dosierungsberechnung: ' + error.message, 'error');
@@ -140,106 +197,38 @@ async function calculateQuickDosage() {
     }
 }
 
-function getFormData() {
-    return {
-        medicationId: document.getElementById('quick-medication')?.value,
-        patientWeight: parseFloat(document.getElementById('quick-weight')?.value),
-        dosagePerKg: parseFloat(document.getElementById('quick-dosage')?.value),
-        frequency: parseInt(document.getElementById('quick-frequency')?.value),
-        patientAge: document.getElementById('patient-age')?.value ?
-            parseFloat(document.getElementById('patient-age').value) : null,
-        medicalCondition: document.getElementById('medical-condition')?.value || null,
-        indication: 'Dashboard Quick Calculation',
-        timestamp: new Date().toISOString()
-    };
-}
-
-function validateDosageForm(formData) {
-    const errors = {};
-
-    if (!formData.medicationId) {
-        errors.medication = 'Bitte wählen Sie ein Medikament aus';
-    }
-
-    if (!formData.patientWeight || formData.patientWeight <= 0) {
-        errors.weight = 'Bitte geben Sie ein gültiges Gewicht ein';
-    } else if (formData.patientWeight > 100) {
-        errors.weight = 'Gewicht scheint unrealistisch hoch zu sein';
-    }
-
-    if (!formData.dosagePerKg || formData.dosagePerKg <= 0) {
-        errors.dosage = 'Bitte geben Sie eine gültige Dosierung ein';
-    } else if (formData.dosagePerKg > 1000) {
-        errors.dosage = 'Dosierung scheint unrealistisch hoch zu sein';
-    }
-
-    if (!formData.frequency || formData.frequency <= 0) {
-        errors.frequency = 'Bitte wählen Sie eine Häufigkeit aus';
-    }
-
-    return {
-        isValid: Object.keys(errors).length === 0,
-        errors: errors
-    };
-}
-
-function displayValidationErrors(errors) {
-    // Clear previous errors
-    document.querySelectorAll('.form-error').forEach(error => error.remove());
-
-    // Display new errors
-    for (const [field, message] of Object.entries(errors)) {
-        const fieldElement = getFieldElement(field);
-        if (fieldElement) {
-            const errorElement = document.createElement('div');
-            errorElement.className = 'form-error';
-            errorElement.textContent = message;
-            fieldElement.parentElement.appendChild(errorElement);
-            fieldElement.classList.add('error');
-        }
-    }
-
-    // Focus first error field
-    const firstErrorField = document.querySelector('.form-input.error, .form-select.error');
-    if (firstErrorField) {
-        firstErrorField.focus();
-    }
-}
-
-function getFieldElement(fieldName) {
-    const fieldMap = {
-        medication: 'quick-medication',
-        weight: 'quick-weight',
-        dosage: 'quick-dosage',
-        frequency: 'quick-frequency'
-    };
-
-    const elementId = fieldMap[fieldName];
-    return elementId ? document.getElementById(elementId) : null;
-}
-
 function displayQuickDosageResult(result) {
     const container = document.getElementById('quick-dosage-result');
     if (!container) return;
 
     const recommendations = result.recommendations;
+    const medicationName = result.medication?.name || 'Medikament';
 
     container.innerHTML = `
         <div class="dosage-result-content">
-            <h4>Berechnungsergebnis</h4>
+            <h4>Berechnungsergebnis für ${utils.sanitizeHTML(medicationName)}</h4>
+            <div class="dosage-calculation">
+                <span class="calculation-formula">
+                    ${result.dosagePerKg} <span class="medication-unit">${result.medication?.dosageUnit || 'mg/kg'}</span> × 
+                    ${result.patientWeight} kg = 
+                    <strong>${recommendations.singleDose} <span class="result-unit">${recommendations.unit}</span></strong>
+                </span>
+            </div>
             <div class="dosage-values">
                 <div class="dosage-value">
                     <span class="dosage-label">Einzeldosis:</span>
-                    <span class="dosage-amount">${recommendations.singleDose.toFixed(2)} ${recommendations.unit}</span>
+                    <span class="dosage-amount">${recommendations.singleDose} ${recommendations.unit}</span>
                 </div>
+                ${recommendations.frequency > 1 ? `
                 <div class="dosage-value">
                     <span class="dosage-label">Tagesdosis:</span>
-                    <span class="dosage-amount">${recommendations.dailyDose.toFixed(2)} ${recommendations.unit}</span>
+                    <span class="dosage-amount">${recommendations.dailyDose} ${recommendations.unit}</span>
                 </div>
                 <div class="dosage-value">
                     <span class="dosage-label">Häufigkeit:</span>
                     <span class="dosage-amount">${recommendations.frequency}x täglich</span>
                 </div>
+                ` : ''}
             </div>
             ${recommendations.warning ? `
                 <div class="dosage-warning">
@@ -247,7 +236,7 @@ function displayQuickDosageResult(result) {
                     ${utils.sanitizeHTML(recommendations.warning)}
                 </div>
             ` : ''}
-            ${recommendations.notes ? `
+            ${recommendations.notes.length > 0 ? `
                 <div class="dosage-notes">
                     <h5>Hinweise:</h5>
                     <ul>
@@ -278,6 +267,7 @@ function displayQuickDosageResult(result) {
 function clearQuickDosage() {
     const form = document.getElementById('quick-dosage-form');
     const result = document.getElementById('quick-dosage-result');
+    const calculationPreview = document.getElementById('calculation-preview');
 
     if (form) {
         form.reset();
@@ -293,6 +283,18 @@ function clearQuickDosage() {
         result.innerHTML = '';
     }
 
+    if (calculationPreview) {
+        calculationPreview.style.display = 'none';
+        calculationPreview.textContent = '';
+    }
+
+    // Clear dosage info
+    const infoContainer = document.getElementById('dosage-info');
+    if (infoContainer) {
+        infoContainer.style.display = 'none';
+        infoContainer.innerHTML = '';
+    }
+
     // Clear form state from localStorage
     utils.storage.remove('quickDosageFormState');
 }
@@ -301,10 +303,19 @@ async function saveDosageCalculation(result) {
     try {
         showLoading();
 
-        const savedResult = await api.post('/dosage/save', {
+        // Add additional fields required by the API
+        const saveData = {
             ...result,
-            savedAt: new Date().toISOString()
-        });
+            medicationId: result.medication?.id,
+            frequency: result.recommendations.frequency,
+            unit: result.recommendations.unit,
+            indication: 'Dashboard Quick Calculation',
+            timestamp: new Date().toISOString(),
+            // Use dosageUnit from medication
+            dosageUnit: result.medication?.dosageUnit
+        };
+
+        const savedResult = await api.post('/dosage/calculate', saveData);
 
         showAlert('Dosierungsberechnung gespeichert', 'success');
 
@@ -335,6 +346,14 @@ function printDosageResult() {
                     font-family: Arial, sans-serif; 
                     margin: 20px; 
                     color: #333;
+                }
+                .dosage-calculation {
+                    background: #f8f9fa;
+                    padding: 15px;
+                    border-radius: 5px;
+                    margin: 20px 0;
+                    font-size: 18px;
+                    text-align: center;
                 }
                 .dosage-values { 
                     margin: 20px 0; 
@@ -374,115 +393,6 @@ function printDosageResult() {
     `);
     printWindow.document.close();
     printWindow.print();
-}
-
-// Form state persistence
-function setupFormStatePersistence(form) {
-    const formId = form.id;
-    const storageKey = `${formId}State`;
-
-    // Load saved state
-    const savedState = utils.storage.get(storageKey);
-    if (savedState) {
-        restoreFormState(form, savedState);
-    }
-
-    // Save state on change
-    const saveState = utils.debounce(() => {
-        const state = getFormState(form);
-        utils.storage.set(storageKey, state);
-    }, 1000);
-
-    form.addEventListener('input', saveState);
-    form.addEventListener('change', saveState);
-}
-
-function getFormState(form) {
-    const formData = new FormData(form);
-    const state = {};
-
-    for (const [key, value] of formData.entries()) {
-        state[key] = value;
-    }
-
-    return state;
-}
-
-function restoreFormState(form, state) {
-    for (const [key, value] of Object.entries(state)) {
-        const field = form.querySelector(`[name="${key}"]`);
-        if (field) {
-            field.value = value;
-        }
-    }
-}
-
-// Form validation setup
-function setupFormValidation(form) {
-    const fields = form.querySelectorAll('.form-input, .form-select');
-
-    fields.forEach(field => {
-        field.addEventListener('blur', () => validateField(field));
-        field.addEventListener('input', () => clearFieldError(field));
-    });
-}
-
-function validateField(field) {
-    const value = field.value.trim();
-    const fieldName = field.name || field.id;
-    let isValid = true;
-    let message = '';
-
-    // Clear previous error
-    clearFieldError(field);
-
-    // Check required fields
-    if (field.hasAttribute('required') && !value) {
-        isValid = false;
-        message = 'Dieses Feld ist erforderlich';
-    }
-
-    // Field-specific validation
-    if (value && !isValid === false) {
-        switch (fieldName) {
-            case 'quick-weight':
-                if (isNaN(value) || parseFloat(value) <= 0) {
-                    isValid = false;
-                    message = 'Bitte geben Sie ein gültiges Gewicht ein';
-                }
-                break;
-            case 'quick-dosage':
-                if (isNaN(value) || parseFloat(value) <= 0) {
-                    isValid = false;
-                    message = 'Bitte geben Sie eine gültige Dosierung ein';
-                }
-                break;
-        }
-    }
-
-    if (!isValid) {
-        showFieldError(field, message);
-    }
-
-    return isValid;
-}
-
-function showFieldError(field, message) {
-    field.classList.add('error');
-
-    const errorElement = document.createElement('div');
-    errorElement.className = 'form-error';
-    errorElement.textContent = message;
-
-    field.parentElement.appendChild(errorElement);
-}
-
-function clearFieldError(field) {
-    field.classList.remove('error');
-    const errorElement = field.parentElement.querySelector('.form-error');
-    if (errorElement) {
-        errorElement.remove();
-    }
 }
 
 // Export functions

@@ -46,10 +46,10 @@ module.exports = (sequelize, DataTypes) => {
             validate: {
                 isArrayOfStrings(value) {
                     if (!Array.isArray(value)) {
-                        throw new Error('Dosierungs-Hinweise müssen ein Array sein');
+                        throw new Error('Dosage instructions have to be of type: array');
                     }
                     if (value.some(item => typeof item !== 'string')) {
-                        throw new Error('Alle Hinweise müssen Strings sein');
+                        throw new Error('All contents of dosage instructions array have to be of type string');
                     }
                 }
             }

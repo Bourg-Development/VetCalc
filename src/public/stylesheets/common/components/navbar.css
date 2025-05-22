@@ -8,6 +8,7 @@
     top: 0;
     z-index: 100;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    padding-top: env(safe-area-inset-top);
 }
 
 .navbar-content {
@@ -28,11 +29,13 @@
 .brand-link {
     display: block;
     text-decoration: none;
+    padding: 0.25rem;
 }
 
 .logo {
     height: auto;
     width: 320px;
+    max-width: 100%;
     transition: height 0.3s ease;
     vertical-align: middle;
 }
@@ -50,6 +53,9 @@
     padding: 0;
     z-index: 102;
     transition: all 0.3s ease;
+    margin-right: env(safe-area-inset-right);
+    min-width: 44px;
+    min-height: 44px;
 }
 
 .hamburger-line {
@@ -84,10 +90,12 @@
     height: 100vh;
     background-color: var(--secondary-color);
     padding: 80px 0 2rem 0;
+    padding-top: calc(80px + env(safe-area-inset-top));
     overflow-y: auto;
     transition: left 0.3s ease;
     z-index: 101;
     box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+    -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
 }
 
 .navbar-nav.active {
@@ -118,6 +126,7 @@
     font-size: 1rem;
     font-weight: 500;
     min-height: 56px; /* Touch-friendly */
+    touch-action: manipulation;
 }
 
 .nav-link:hover {
@@ -149,6 +158,7 @@
 .mobile-user-menu {
     margin-top: 2rem;
     padding-top: 1rem;
+    padding-bottom: env(safe-area-inset-bottom);
 }
 
 .mobile-user-divider {
@@ -167,6 +177,7 @@
     transition: all 0.3s ease;
     font-size: 1rem;
     min-height: 56px;
+    touch-action: manipulation;
 }
 
 .mobile-user-item:hover {
@@ -188,6 +199,7 @@
 .navbar-user {
     flex-shrink: 0;
     z-index: 102;
+    padding-right: env(safe-area-inset-right);
 }
 
 .user-menu {
@@ -207,6 +219,7 @@
     cursor: pointer;
     transition: all 0.3s ease;
     min-height: 44px; /* Touch-friendly */
+    touch-action: manipulation;
 }
 
 .user-avatar:hover {
@@ -246,6 +259,7 @@
     transition: background-color 0.3s ease;
     font-size: 0.9rem;
     min-height: 44px; /* Touch-friendly */
+    touch-action: manipulation;
 }
 
 .dropdown-item:hover {
@@ -283,6 +297,49 @@
 .mobile-menu-overlay.active {
     opacity: 1;
     visibility: visible;
+}
+
+/* Performance optimizations */
+@media (max-width: 768px) {
+    .nav-link, .mobile-user-item, .user-avatar {
+        will-change: transform;
+    }
+
+    /* Reduce animation complexity on mobile */
+    .nav-link:hover, .mobile-user-item:hover {
+        transition-duration: 0.2s;
+    }
+}
+
+/* Orientation handling */
+@media (max-width: 768px) and (orientation: landscape) {
+    .navbar-content {
+        min-height: 50px;
+        padding: 0.5rem 0;
+    }
+
+    .mobile-menu-toggle {
+        width: 25px;
+        height: 25px;
+    }
+
+    .navbar-nav {
+        padding-top: calc(50px + env(safe-area-inset-top));
+    }
+
+    .nav-link {
+        min-height: 44px;
+        padding: 0.5rem 1.5rem;
+    }
+
+    .mobile-user-item {
+        min-height: 44px;
+        padding: 0.5rem 1.5rem;
+    }
+
+    .logo {
+        width: 260px;
+    }
 }
 
 /* Tablet Styles */
@@ -404,12 +461,20 @@
     .nav-link.active {
         border: 2px solid var(--white);
     }
+
+    .hamburger-line {
+        height: 4px;
+    }
 }
 
 /* Reduced motion support */
 @media (prefers-reduced-motion: reduce) {
     * {
         transition-duration: 0.1s !important;
+    }
+
+    .nav-link:hover, .mobile-user-item:hover {
+        transform: none;
     }
 }
 

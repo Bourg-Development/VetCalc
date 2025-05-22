@@ -235,6 +235,16 @@
     .dashboard-welcome p {
         font-size: var(--font-size-base);
     }
+
+    /* Better touch interactions for mobile */
+    .activity-item, .medication-item, .quick-action {
+        transition: all 0.2s ease;
+    }
+
+    /* Optimize for mobile performance */
+    .dashboard-card {
+        will-change: transform;
+    }
 }
 
 @media (max-width: 480px) {
@@ -258,6 +268,28 @@
     .chart-action-btn {
         width: 100%;
         justify-content: center;
+        min-height: 44px;
+    }
+
+    /* Simpler animations for very small screens */
+    .activity-item:hover, .medication-item:hover, .quick-action:hover {
+        transform: none;
+    }
+}
+
+/* Orientation handling for landscape mode */
+@media (max-width: 768px) and (orientation: landscape) {
+    .dashboard-page .main-content {
+        padding: var(--spacing-3) 0 var(--spacing-6);
+    }
+
+    .dashboard-card {
+        max-height: 80vh;
+        overflow-y: auto;
+    }
+
+    .dashboard-welcome {
+        padding: var(--spacing-4);
     }
 }
 
@@ -321,8 +353,8 @@
     .activity-item,
     .medication-item,
     .quick-action {
-        animation: none;
-        transition: none;
+        animation: none !important;
+        transition: none !important;
     }
 
     .dashboard-card {

@@ -1,57 +1,52 @@
 <!-- views/components/dosage-calculator.ejs -->
-<div class="dashboard-card">
+<div class="dashboard-card card">
     <div class="card-header">
-        <h2 class="card-title">
-            <i class="card-icon">🧮</i>
-            Schnelle Dosierung
-        </h2>
+        <h3 class="card-title">
+            <span class="material-symbols-outlined">calculate</span>
+            Schnelle Dosisberechnung
+        </h3>
     </div>
-    <div class="card-content">
+    <div class="card-body">
         <form id="quick-dosage-form" class="quick-dosage-form">
-            <div class="form-group">
-                <label for="quick-medication" class="form-label required">Medikament</label>
-                <select id="quick-medication" class="form-select" required>
-                    <option value="">Wählen...</option>
-                </select>
-            </div>
             <div class="form-row">
-                <div class="form-group">
-                    <label for="quick-weight" class="form-label required">Gewicht (kg)</label>
-                    <input type="number" id="quick-weight" class="form-input" step="0.1" min="0.1" max="100" required>
+                <div class="form-group col-md-12">
+                    <label for="quick-medication" class="form-label">Medikament</label>
+                    <select id="quick-medication" name="medicationId" class="form-select" required>
+                        <option value="">Medikament wählen...</option>
+                        <!-- Options will be populated by loadMedicationsForQuickDosage() -->
+                    </select>
                 </div>
-                <div class="form-group">
-                    <label for="quick-dosage" class="form-label required">Dosis (mg/kg)</label>
-                    <input type="number" id="quick-dosage" class="form-input" step="0.1" min="0.1" max="1000" required>
+            </div>
+
+            <div id="dosage-info" class="dosage-info" style="display: none;"></div>
+
+            <div class="form-row">
+                <div class="form-group col-md-6">
+                    <label for="quick-weight" class="form-label">Gewicht (kg)</label>
+                    <input type="number" id="quick-weight" name="patientWeight" class="form-input"
+                           min="0.1" step="0.1" placeholder="z.B. 12.5" required>
+                </div>
+                <div class="form-group col-md-6">
+                    <label for="quick-dosage" class="form-label">Dosierung (<span class="medication-unit">mg/kg</span>)</label>
+                    <input type="number" id="quick-dosage" name="dosagePerKg" class="form-input"
+                           min="0.01" step="any" placeholder="Auto" required readonly>
                 </div>
             </div>
-            <div class="form-group">
-                <label for="quick-frequency" class="form-label required">Häufigkeit/Tag</label>
-                <select id="quick-frequency" class="form-select" required>
-                    <option value="">Wählen...</option>
-                    <option value="1">1x täglich</option>
-                    <option value="2">2x täglich</option>
-                    <option value="3">3x täglich</option>
-                    <option value="4">4x täglich</option>
-                </select>
-            </div>
 
-            <!-- Additional fields (hidden by default) -->
-            <div id="additional-dosage-fields" style="display: none;">
-                <!-- Dynamically added based on medication requirements -->
-            </div>
+            <div id="calculation-preview" class="calculation-preview" style="display: none;"></div>
 
-            <!-- Dosage info panel (hidden by default) -->
-            <div id="dosage-info" style="display: none;">
-                <!-- Dynamically added dosage information -->
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">
+                    <span class="material-symbols-outlined">calculate</span>
+                    Berechnen
+                </button>
+                <button type="button" class="btn btn-secondary" onclick="clearQuickDosage()">
+                    <span class="material-symbols-outlined">refresh</span>
+                    Zurücksetzen
+                </button>
             </div>
-
-            <button type="submit" class="btn btn-primary btn-block prevent-double-submit">
-                <i class="btn-icon">🧮</i>
-                Berechnen
-            </button>
         </form>
-        <div id="quick-dosage-result" class="dosage-result" style="display: none;">
-            <!-- Ergebnis wird hier angezeigt -->
-        </div>
+
+        <div id="quick-dosage-result" class="quick-dosage-result" style="display: none;"></div>
     </div>
 </div>

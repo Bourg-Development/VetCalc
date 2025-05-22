@@ -71,6 +71,8 @@
     cursor: pointer;
     border-radius: var(--border-radius-sm);
     transition: background-color var(--transition-fast);
+    min-height: 44px;
+    min-width: 44px;
 }
 
 .search-btn {
@@ -101,6 +103,8 @@
     color: var(--gray-600);
     border-radius: var(--border-radius-sm);
     transition: all var(--transition-fast);
+    min-height: 44px;
+    min-width: 44px;
 }
 
 .barcode-scan-btn:hover {
@@ -130,10 +134,12 @@
 
 .filter-select {
     min-width: 0;
+    font-size: 16px; /* Prevents iOS zoom on focus */
 }
 
 .filter-reset-btn {
     white-space: nowrap;
+    min-height: 44px;
 }
 
 /* Medications Stats */
@@ -191,6 +197,7 @@
     overflow: hidden;
     transition: all var(--transition-normal);
     position: relative;
+    will-change: transform;
 }
 
 .medication-card:hover {
@@ -305,8 +312,8 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    min-width: 2rem;
-    height: 2rem;
+    min-width: 44px;
+    height: 44px;
 }
 
 .medication-action-btn:hover {
@@ -413,7 +420,8 @@
     border-radius: var(--border-radius-sm);
     transition: all var(--transition-fast);
     font-size: var(--font-size-sm);
-    min-width: 2.5rem;
+    min-width: 44px;
+    min-height: 44px;
     text-align: center;
     cursor: pointer;
 }
@@ -439,6 +447,9 @@
     padding: var(--spacing-2) var(--spacing-1);
     color: var(--gray-500);
     font-size: var(--font-size-sm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .pagination-info {
@@ -451,6 +462,7 @@
 
 .pagination-select {
     min-width: 140px;
+    font-size: 16px; /* Prevents iOS zoom on focus */
 }
 
 /* Modal Styles */
@@ -477,6 +489,7 @@
     max-height: 90vh;
     overflow-y: auto;
     animation: modalFadeIn 0.3s ease-out;
+    padding-bottom: env(safe-area-inset-bottom);
 }
 
 .modal-sm {
@@ -522,6 +535,11 @@
     line-height: 1;
     border-radius: var(--border-radius-sm);
     transition: all var(--transition-fast);
+    min-width: 44px;
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .modal-close:hover {
@@ -577,9 +595,10 @@
     padding: var(--spacing-3);
     border: 1px solid var(--gray-300);
     border-radius: var(--border-radius-md);
-    font-size: var(--font-size-base);
+    font-size: 16px; /* Prevents iOS zoom on focus */
     background-color: var(--white);
     transition: border-color var(--transition-fast);
+    min-height: 44px;
 }
 
 
@@ -743,6 +762,7 @@
     gap: var(--spacing-3);
     margin-bottom: var(--spacing-4);
     justify-content: center;
+    flex-wrap: wrap;
 }
 
 .mode-btn {
@@ -758,6 +778,7 @@
     cursor: pointer;
     transition: all var(--transition-fast);
     min-width: 120px;
+    min-height: 44px;
     justify-content: center;
 }
 
@@ -806,15 +827,6 @@
     z-index: 10;
 }
 
-.scanner-frame {
-    width: 250px;
-    height: 250px;
-    border: 3px solid var(--primary-color);
-    border-radius: var(--border-radius-md);
-    box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.2);
-    animation: scannerPulse 2s ease-in-out infinite;
-}
-
 @keyframes scannerPulse {
     0%, 100% {
         box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.2);
@@ -832,6 +844,7 @@
     margin-top: var(--spacing-4);
     font-size: var(--font-size-sm);
     font-weight: var(--font-weight-medium);
+    display: none;
 }
 
 .camera-controls {
@@ -862,6 +875,8 @@
     font-family: 'Courier New', monospace;
     font-size: var(--font-size-lg);
     text-align: center;
+    font-size: 16px; /* Prevents iOS zoom on focus */
+    min-height: 44px;
 }
 
 .input-hint {
@@ -891,6 +906,7 @@
     cursor: pointer;
     font-weight: var(--font-weight-medium);
     transition: all var(--transition-fast);
+    min-height: 44px;
 }
 
 .file-input-label:hover {
@@ -996,6 +1012,11 @@
     color: var(--gray-600);
     cursor: pointer;
     transition: all var(--transition-fast);
+    min-width: 44px;
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .barcode-action-btn:hover {
@@ -1026,6 +1047,22 @@
 @keyframes spin {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
+}
+
+/* Orientation handling */
+@media (max-width: 768px) and (orientation: landscape) {
+    .modal-content {
+        max-height: 85vh;
+    }
+
+    .medications-empty,
+    .medications-loading {
+        padding: var(--spacing-8);
+    }
+
+    .scanner-mode-selector {
+        flex-wrap: wrap;
+    }
 }
 
 /* Responsive Design */
@@ -1059,6 +1096,7 @@
 
     .medications-actions .btn {
         flex: 1;
+        min-height: 44px;
     }
 
     .filters-container {
@@ -1088,6 +1126,7 @@
 
     .modal {
         padding: var(--spacing-2);
+        padding-bottom: env(safe-area-inset-bottom);
     }
 
     .modal-content {
@@ -1112,6 +1151,16 @@
         flex-direction: column;
         align-items: flex-start;
         gap: var(--spacing-1);
+    }
+
+    /* Optimize for mobile performance */
+    .medication-card {
+        will-change: transform;
+    }
+
+    /* Input group improvements for mobile */
+    .input-group {
+        flex-direction: column;
     }
 }
 
@@ -1148,6 +1197,32 @@
 
     .barcode-scan-btn {
         right: 4rem;
+    }
+
+    /* Better touch target sizing */
+    .barcode-scan-btn,
+    .search-btn,
+    .search-clear-btn {
+        width: 44px;
+        height: 44px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    /* Better spacing for modals */
+    .modal-footer {
+        flex-direction: column;
+        gap: var(--spacing-3);
+    }
+
+    .modal-footer .btn {
+        width: 100%;
+    }
+
+    /* Simplified hover animations for small screens */
+    .medication-card:hover {
+        transform: translateY(-2px);
     }
 }
 
@@ -1261,16 +1336,17 @@
 @media (prefers-reduced-motion: reduce) {
     .medication-card,
     .modal-content {
-        transition: none;
-        animation: none;
+        transition: none !important;
+        animation: none !important;
     }
 
     .medication-card:hover {
         transform: none;
     }
 
-    .scanner-frame {
-        animation: none;
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(359deg); }
     }
 }
 

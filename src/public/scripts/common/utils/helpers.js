@@ -200,5 +200,10 @@ const utils = {
             const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
             return emailRegex.test(email);
         }
-    }
+    },
+    cleanUpUrl(){
+        // Clean up URL without reloading the page
+        const newUrl = window.location.pathname;
+        window.history.replaceState({}, document.title, newUrl);
+    },
 };

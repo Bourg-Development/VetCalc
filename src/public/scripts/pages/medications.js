@@ -94,11 +94,18 @@ function checkUrlParameters() {
     if (urlParams.get('add') === 'true') {
         setTimeout(() => {
             openAddMedicationModal();
-            // Clean up URL without reloading the page
-            const newUrl = window.location.pathname;
-            window.history.replaceState({}, document.title, newUrl);
+            utils.cleanUpUrl();
         }, 100); // Small delay to ensure UI is fully loaded
     }
+
+    // Check if scan-barcode=true parameter is present
+    if(urlParams.get('scan-barcode') === 'true'){
+        setTimeout(() => {
+            openBarcodeScanner()
+            utils.cleanUpUrl()
+        }, 100)  // Small delay to ensure UI is fully loaded
+    }
+
 }
 
 // Load medications from API
@@ -1180,6 +1187,7 @@ function closeBarcodeScanner() {
     if (modal) {
         modal.style.display = 'none';
     }
+    document.querySelector('.scanner-hint').style.display = 'none';
     stopScanner();
 }
 
@@ -1229,7 +1237,8 @@ async function startScanner() {
             (decodedText, decodedResult) => onScanSuccess(decodedText, decodedResult),
             (errorMessage) => {}  // We don't need to show error messages as they happen on every frame without a barcode
         );
-
+        // Show hint to place barcode within scanner overlay
+        document.querySelector('.scanner-hint').style.display = 'block';
         updateScannerButtons(true);
         showAlert('Scanner erfolgreich gestartet', 'success');
     } catch (error) {
