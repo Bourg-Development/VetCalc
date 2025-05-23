@@ -56,7 +56,7 @@ module.exports = (sequelize, DataTypes) => {
         },
 
         category: {
-            type: DataTypes.ENUM('Anästhetika ', 'Antibiotika', 'Antiparasitika', 'Augensalbe', 'Bronchienerweiterer', 'Ergenzungsfuttermittel','Salbe', 'Schleimlöser','Schmerzmittel', 'Impfstoffe', 'Hormone', 'Vitamine', 'Sonstige'),
+            type: DataTypes.ENUM('Anästhetika', 'Antibiotika', 'Antiparasitika', 'Augensalbe', 'Bronchienerweiterer', 'Ergenzungsfuttermittel','Salbe', 'Schleimlöser','Schmerzmittel', 'Impfstoffe', 'Hormone', 'Vitamine', 'Sonstige'),
             allowNull: false,
             defaultValue: 'Sonstige'
         },
