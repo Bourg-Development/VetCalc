@@ -403,7 +403,6 @@ img, video, svg {
 @media (pointer: coarse) {
     .btn, .nav-link, .card-action, .pagination-btn, .modal-close, .form-check-label {
         min-height: 44px;
-        min-width: 44px;
         padding: var(--spacing-3) var(--spacing-4);
     }
 
