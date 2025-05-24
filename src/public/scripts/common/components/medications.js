@@ -4,7 +4,7 @@
 async function loadPopularMedications() {
     try {
         const response = await api.get('/medications?limit=6');
-        dashboardData.medications = response.medications || [];
+        dashboardData.medications = response.medications.slice(6) || [];
         displayPopularMedications();
     } catch (error) {
         console.error('Error loading popular medications:', error);
