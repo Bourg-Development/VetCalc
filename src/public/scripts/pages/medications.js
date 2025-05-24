@@ -128,7 +128,7 @@ async function loadMedications() {
 
 // Generate dummy medications for demonstration
 function generateDummyMedications() {
-    const categories = ['Anästhetika', 'Antibiotika', 'Antiparasitika', 'Augensalbe', 'Bronchienerweiterer', 'Ergänzungsfuttermittel', 'Entzündungshemmer','Salbe', 'Schleimlöser', 'Impfstoffe', 'Hormone', 'Vitamine', 'Sonstige'];
+    const categories = ['Anästhetika', 'Antibiotika', 'Antiparasitika', 'Antihistaminikum','Augensalbe', 'Bronchienerweiterer', 'Ergänzungsfuttermittel', 'Entzündungshemmer' , 'Glucocorticoid','Salbe', 'Schleimlöser', 'Impfstoffe', 'Hormone', 'Vitamine', 'Sonstige'];
     const forms = ['Tablette', 'Kapsel', 'Tropfen', 'Sirup', 'Injektion', 'Paste', 'Puder', 'Salbe', 'Spray'];
     const dosageUnits = ['mg', 'g', 'mcg', 'pg', 'ml', 'l', 'IU', 'Stk', 'Tropfen', 'Hub', 'Beutel', '%'];
 
