@@ -4,8 +4,7 @@ const sequelize = require('sequelize');
 
 class MedicationService {
     async getAllMedications(options = {}) {
-        const { search, page = 1, limit } = options;
-        const offset = (page - 1) * limit;
+        const { search } = options;
 
         let whereClause = {};
         if (search) {
@@ -21,16 +20,12 @@ class MedicationService {
         const medications = await Medication.findAndCountAll({
             where: whereClause,
             include: [BarcodeMapping],
-            limit: limit  === 0 ? null : parseInt(limit),
-            offset: parseInt(offset),
             order: [['name', 'ASC']]
         });
 
         return {
             medications: medications.rows,
             totalCount: medications.count,
-            totalPages: Math.ceil(medications.count / limit),
-            currentPage: parseInt(page)
         };
     }
 
