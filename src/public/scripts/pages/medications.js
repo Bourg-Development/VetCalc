@@ -111,7 +111,7 @@ function checkUrlParameters() {
 // Load medications from API
 async function loadMedications() {
     try {
-        const response = await api.get('/medications');
+        const response = await api.get('/medications?limit=null');
         medicationsData.medications = response.medications || [];
         medicationsData.totalCount = medicationsData.medications.length;
 

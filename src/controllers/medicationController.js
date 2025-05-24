@@ -7,7 +7,7 @@ class MedicationController {
             const options = {
                 search: req.query.search,
                 page: req.query.page || 1,
-                limit: req.query.limit || 10
+                limit: req.query.limit || 0
             };
 
             const result = await medicationService.getAllMedications(options);
