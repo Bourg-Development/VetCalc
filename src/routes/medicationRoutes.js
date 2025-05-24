@@ -8,14 +8,14 @@ const router = express.Router();
 const medicationValidation = [
     body('name').notEmpty().withMessage('Name ist erforderlich'),
     body('activeIngredient').notEmpty().withMessage('Wirkstoff ist erforderlich'),
-    body('form').isIn(['Tablette', 'Kapsel', 'Tropfen', 'Sirup', 'Injektion', 'Salbe', 'Spray', null])
+    body('form').isIn(['Tablette', 'Kapsel', 'Tropfen', 'Sirup', 'Injektion', 'Paste', 'Puder', 'Salbe', 'Spray', null])
         .withMessage('Ungültige Darreichungsform')
 ];
 
 const updateValidation = [
     body('name').optional().notEmpty().withMessage('Name darf nicht leer sein'),
     body('activeIngredient').optional().notEmpty().withMessage('Wirkstoff darf nicht leer sein'),
-    body('form').optional().isIn(['Tablette', 'Kapsel', 'Tropfen', 'Sirup', 'Injektion', 'Salbe', 'Spray', null])
+    body('form').optional().isIn(['Tablette', 'Kapsel', 'Tropfen', 'Sirup', 'Injektion', 'Paste', 'Puder','Salbe', 'Spray', null])
         .withMessage('Ungültige Darreichungsform')
 ];
 
