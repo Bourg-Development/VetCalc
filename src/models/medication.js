@@ -61,7 +61,7 @@ module.exports = (sequelize, DataTypes) => {
             defaultValue: 'Sonstige'
         },
         form: {
-            type: DataTypes.ENUM('Tablette', 'Kapsel', 'Tropfen', 'Sirup', 'Injektion', 'Salbe', 'Spray'),
+            type: DataTypes.ENUM('Tablette', 'Kapsel', 'Tropfen', 'Sirup', 'Injektion','Paste','Puder', 'Salbe', 'Spray'),
             allowNull: true
         },
         manufacturer: {
